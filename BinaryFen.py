@@ -66,10 +66,6 @@ def decode(compressed: bytearray) -> chess.Board:
         occupied |= compressed[i] << (56 - i * 8)
 
     offset = 16
-    white_castle_idx = 0
-    black_castle_idx = 0
-    white_castle: list[int | None] = [None, None]
-    black_castle: list[int | None] = [None, None]
 
     # get an empty board
     board = chess.Board.empty()
@@ -96,14 +92,12 @@ def decode(compressed: bytearray) -> chess.Board:
 
         # castling rights for white
         elif nibble == 13:
-            white_castle[white_castle_idx] = sq
-            white_castle_idx += 1
+            board.castling_rights |= chess.BB_SQUARES[sq]
             board.set_piece_at(sq, chess.Piece(chess.ROOK, chess.WHITE))
 
         # castling rights for black
         elif nibble == 14:
-            black_castle[black_castle_idx] = sq
-            black_castle_idx += 1
+            board.castling_rights |= chess.BB_SQUARES[sq]
             board.set_piece_at(sq, chess.Piece(chess.ROOK, chess.BLACK))
 
         # black to move king
@@ -112,13 +106,5 @@ def decode(compressed: bytearray) -> chess.Board:
             board.set_piece_at(sq, chess.Piece(chess.KING, chess.BLACK))
 
         offset += 1
-
-    # reapply castling
-    for i in range(2):
-        if (sq := white_castle[i]) is not None:
-            board.castling_rights |= chess.BB_SQUARES[sq]
-
-        if (sq := black_castle[i]) is not None:
-            board.castling_rights |= chess.BB_SQUARES[sq]
 
     return board
