@@ -23,7 +23,7 @@ def convert_meaning(board: chess.Board, sq: chess.Square, piece: chess.Piece) ->
     return piece.piece_type + (-1 if piece.color == chess.WHITE else 5)
 
 
-def encode(board: chess.Board) -> bytearray:
+def encode(board: chess.Board) -> bytes:
     packed = bytearray(24)
 
     packed[0] = board.occupied >> 56
@@ -45,7 +45,7 @@ def encode(board: chess.Board) -> bytearray:
         packed[offset // 2] |= convert_meaning(board, sq, piece) << shift
         offset += 1
 
-    return packed
+    return bytes(packed)
 
 
 # for pieces with a special meaning return None
@@ -59,7 +59,7 @@ def convert_piece(piece: int) -> chess.Piece | None:
     return chess.Piece(piece - 5, chess.BLACK)
 
 
-def decode(compressed: bytearray) -> chess.Board:
+def decode(compressed: bytes) -> chess.Board:
     occupied = 0
 
     for i in range(8):
