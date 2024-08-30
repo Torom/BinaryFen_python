@@ -38,7 +38,7 @@ def encode(board: chess.Board) -> bytes:
     offset = 16
 
     for sq, piece in reversed(board.piece_map().items()):
-        # since piece_map() iterates the fields H8 -> A1, I had to use reversed() here.
+        # it is faster to reverse the piece_map than to use scan_forward().
         # we now fill the packed array, since our convertedpiece only actually needs 4 bits,
         # we can store 2 pieces in one byte.
         shift = 4 if offset % 2 == 0 else 0
