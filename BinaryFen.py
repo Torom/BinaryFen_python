@@ -6,7 +6,7 @@ import chess
 # 14 => any black rook with castling rights, side will be deduced from the file
 # 15 => black king and black is side to move
 def convert_meaning(board: chess.Board, sq: chess.Square, piece: chess.Piece) -> int:
-    if piece.piece_type == chess.PAWN and sq ^ 8 == board.ep_square:
+    if piece.piece_type == chess.PAWN and any(board.generate_legal_ep(to_mask=chess.BB_SQUARES[sq ^ 8])):
         return 12
 
     if piece.piece_type == chess.ROOK:
